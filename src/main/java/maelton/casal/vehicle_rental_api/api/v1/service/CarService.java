@@ -59,10 +59,10 @@ public class CarService {
         Optional<Car> optionalCar = carRepository.findById(id);
         if(optionalCar.isPresent()) {
             Car car = optionalCar.get();
-                car.setName(carUpdateDTO.name());
                 if(!carUpdateDTO.chassis().equals(car.getChassis()))
                     if(carRepository.existsCarByChassis(carUpdateDTO.chassis()))
                         throw new ChassisNumberAlreadyExistsException(carUpdateDTO.chassis());
+                car.setName(carUpdateDTO.name());
                 car.setChassis(carUpdateDTO.chassis());
                 car.setNumberOfDoors(carUpdateDTO.numberOfDoors());
 

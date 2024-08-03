@@ -1,16 +1,16 @@
 services:
   database:
     image: postgres:latest
-    container_name: vehicle-rental-db-container
+    container_name: vehicle-rental-api-db-container
     restart: always
     environment:
-      - POSTGRES_DB=vehicle-rental-db
+      - POSTGRES_DB=vehicle_rental_api
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
     ports:
       - '5433:5432' #tenho postgres local, então vou usar a 5433 para o container
     volumes:
-      - vehicle-rental-db-volume:/var/lib/postgresql/data
+      - vehicle-rental-api-db-volume:/var/lib/postgresql/data
 
   pgadmin: #Caso você precise do pgadmin para visualizar o banco de dados
     image: dpage/pgadmin4
@@ -22,5 +22,5 @@ services:
     ports:
       - '8081:80' #tomcat do spring roda na 8080, então vou usar a 8081 para esse container
 volumes:
-  vehicle-rental-db-volume:
-    name: vehicle-rental-db-volume
+  vehicle-rental-api-db-volume:
+    name: vehicle-rental-api-db-volume
