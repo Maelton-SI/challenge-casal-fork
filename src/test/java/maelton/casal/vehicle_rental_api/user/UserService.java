@@ -1,4 +1,4 @@
-package maelton.casal.vehicle_rental_api.service;
+package maelton.casal.vehicle_rental_api.user;
 
 import org.springframework.stereotype.Service;
 

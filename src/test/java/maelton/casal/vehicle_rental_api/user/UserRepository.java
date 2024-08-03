@@ -1,6 +1,5 @@
-package maelton.casal.vehicle_rental_api.repository;
+package maelton.casal.vehicle_rental_api.user;
 
-import maelton.casal.vehicle_rental_api.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
