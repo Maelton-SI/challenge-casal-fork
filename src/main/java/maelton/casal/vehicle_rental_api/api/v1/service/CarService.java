@@ -1,10 +1,10 @@
 package maelton.casal.vehicle_rental_api.api.v1.service;
 
-import maelton.casal.vehicle_rental_api.api.v1.dto.car.CarCreateOrUpdateDTO;
+import maelton.casal.vehicle_rental_api.api.v1.dto.car.CarRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.car.CarResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.entity.vehicle.Car;
-import maelton.casal.vehicle_rental_api.api.v1.exception.CarUUIDNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.ChassisNumberAlreadyExistsException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.CarUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
 import maelton.casal.vehicle_rental_api.api.v1.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class CarService {
     private CarRepository carRepository;
 
     //CREATE
-    public CarResponseDTO createCar(CarCreateOrUpdateDTO carCreateDTO) {
+    public CarResponseDTO createCar(CarRequestDTO carCreateDTO) {
         if(carRepository.findCarByChassis(carCreateDTO.chassis()).isEmpty()) {
             Car car = carRepository.save(
                     new Car(carCreateDTO.name(), carCreateDTO.chassis(), carCreateDTO.numberOfDoors())
@@ -55,7 +55,7 @@ public class CarService {
     }
 
     //UPDATE
-    public CarResponseDTO updateCar(UUID id, CarCreateOrUpdateDTO carUpdateDTO) {
+    public CarResponseDTO updateCar(UUID id, CarRequestDTO carUpdateDTO) {
         Optional<Car> optionalCar = carRepository.findById(id);
         if(optionalCar.isPresent()) {
             Car car = optionalCar.get();

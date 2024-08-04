@@ -1,8 +1,8 @@
 package maelton.casal.vehicle_rental_api.api.v1.exception.handler;
 
-import maelton.casal.vehicle_rental_api.api.v1.exception.CarUUIDNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.ChassisNumberAlreadyExistsException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.MotorcycleUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.CarUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.MotorcycleUUIDNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

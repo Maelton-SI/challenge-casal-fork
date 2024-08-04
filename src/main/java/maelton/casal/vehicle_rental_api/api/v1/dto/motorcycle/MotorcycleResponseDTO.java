@@ -4,6 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.UUID;
 
-@Schema(description = "DTO used to represent motorcycle data in the response")
+@Schema(description = "DTO used to represent motorcycles data in responses")
 public record MotorcycleResponseDTO(UUID id, String name, String chassis, int tankCapacity) {
 }

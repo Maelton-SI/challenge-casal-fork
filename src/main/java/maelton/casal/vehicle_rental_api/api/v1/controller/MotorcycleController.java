@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import maelton.casal.vehicle_rental_api.api.v1.dto.motorcycle.MotorcycleCreateOrUpdateDTO;
+import maelton.casal.vehicle_rental_api.api.v1.dto.motorcycle.MotorcycleRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.motorcycle.MotorcycleResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
 import maelton.casal.vehicle_rental_api.api.v1.service.MotorcycleService;
@@ -43,7 +43,7 @@ public class MotorcycleController {
         }
     )
     @PostMapping(produces = "application/json")
-    public ResponseEntity<MotorcycleResponseDTO> createMotorcycle(@RequestBody MotorcycleCreateOrUpdateDTO motorcycleCreateDTO) {
+    public ResponseEntity<MotorcycleResponseDTO> createMotorcycle(@RequestBody MotorcycleRequestDTO motorcycleCreateDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(motorcycleService.createMotorcycle(motorcycleCreateDTO));
     }
 
@@ -112,7 +112,7 @@ public class MotorcycleController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<MotorcycleResponseDTO> updateMotorcycle(@PathVariable UUID id,
-                                                    @RequestBody MotorcycleCreateOrUpdateDTO motorcycleUpdateDTO) {
+                                                    @RequestBody MotorcycleRequestDTO motorcycleUpdateDTO) {
         return ResponseEntity.ok(motorcycleService.updateMotorcycle(id, motorcycleUpdateDTO));
     }
 

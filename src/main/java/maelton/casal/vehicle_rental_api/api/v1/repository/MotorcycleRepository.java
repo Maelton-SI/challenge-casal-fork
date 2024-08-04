@@ -14,6 +14,6 @@ public interface MotorcycleRepository extends JpaRepository<Motorcycle, UUID> {
     Optional<Motorcycle> findMotorcycleByChassis(String chassis);
     void deleteById(UUID id);
 
-    Boolean existsMotorcycleByChassis(String chassis);
     Boolean existsMotorcycleById(UUID id);
+    Boolean existsMotorcycleByChassis(String chassis);
 }

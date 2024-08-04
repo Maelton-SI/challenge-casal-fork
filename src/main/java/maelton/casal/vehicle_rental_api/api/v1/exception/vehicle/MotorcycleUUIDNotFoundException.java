@@ -1,4 +1,4 @@
-package maelton.casal.vehicle_rental_api.api.v1.exception;
+package maelton.casal.vehicle_rental_api.api.v1.exception.vehicle;
 
 import java.util.UUID;
 

@@ -1,10 +1,10 @@
 package maelton.casal.vehicle_rental_api.api.v1.service;
 
-import maelton.casal.vehicle_rental_api.api.v1.dto.motorcycle.MotorcycleCreateOrUpdateDTO;
+import maelton.casal.vehicle_rental_api.api.v1.dto.motorcycle.MotorcycleRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.motorcycle.MotorcycleResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.entity.vehicle.Motorcycle;
-import maelton.casal.vehicle_rental_api.api.v1.exception.MotorcycleUUIDNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.ChassisNumberAlreadyExistsException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.MotorcycleUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
 import maelton.casal.vehicle_rental_api.api.v1.repository.MotorcycleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class MotorcycleService {
     private MotorcycleRepository motorcycleRepository;
 
     //CREATE
-    public MotorcycleResponseDTO createMotorcycle(MotorcycleCreateOrUpdateDTO motorcycleCreateDTO) {
+    public MotorcycleResponseDTO createMotorcycle(MotorcycleRequestDTO motorcycleCreateDTO) {
         if(motorcycleRepository.findMotorcycleByChassis(motorcycleCreateDTO.chassis()).isEmpty()) {
             Motorcycle motorcycle = motorcycleRepository.save(
                     new Motorcycle(motorcycleCreateDTO.name(),
@@ -64,7 +64,7 @@ public class MotorcycleService {
     }
 
     //UPDATE
-    public MotorcycleResponseDTO updateMotorcycle(UUID id, MotorcycleCreateOrUpdateDTO motorcycleUpdateDTO) {
+    public MotorcycleResponseDTO updateMotorcycle(UUID id, MotorcycleRequestDTO motorcycleUpdateDTO) {
         Optional<Motorcycle> optionalMotorcycle = motorcycleRepository.findById(id);
         if(optionalMotorcycle.isPresent()) {
             Motorcycle motorcycle = optionalMotorcycle.get();

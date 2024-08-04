@@ -16,6 +16,6 @@ public interface CarRepository extends JpaRepository<Car, UUID> {
     Optional<Car> findCarByChassis(String chassis);
     void deleteById(UUID id);
 
-    Boolean existsCarByChassis(String chassis);
     Boolean existsCarById(UUID id);
+    Boolean existsCarByChassis(String chassis);
 }

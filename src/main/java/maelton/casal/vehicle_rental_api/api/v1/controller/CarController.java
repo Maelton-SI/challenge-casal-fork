@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import maelton.casal.vehicle_rental_api.api.v1.dto.car.CarCreateOrUpdateDTO;
+import maelton.casal.vehicle_rental_api.api.v1.dto.car.CarRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.car.CarResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
 import maelton.casal.vehicle_rental_api.api.v1.service.CarService;
@@ -50,7 +50,7 @@ public class CarController {
         }
     )
     @PostMapping(produces = "application/json")
-    public ResponseEntity<CarResponseDTO> createCar(@RequestBody CarCreateOrUpdateDTO carCreateDTO) {
+    public ResponseEntity<CarResponseDTO> createCar(@RequestBody CarRequestDTO carCreateDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carCreateDTO));
     }
 
@@ -119,7 +119,7 @@ public class CarController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<CarResponseDTO> updateCar(@PathVariable UUID id,
-                                                    @RequestBody CarCreateOrUpdateDTO carUpdateDTO) {
+                                                    @RequestBody CarRequestDTO carUpdateDTO) {
         return ResponseEntity.ok(carService.updateCar(id, carUpdateDTO));
     }
 
