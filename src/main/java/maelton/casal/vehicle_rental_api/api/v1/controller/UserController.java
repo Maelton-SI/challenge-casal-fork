@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserResponseDTO;
+import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
 import maelton.casal.vehicle_rental_api.api.v1.service.UserService;
 
@@ -17,10 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -37,6 +36,12 @@ public class UserController {
                          description = "New user created successfully",
                          content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponseDTO.class)
+                         )}
+            ),
+            @ApiResponse(responseCode = "400",
+                         description = "Invalid or corrupted request",
+                         content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
                          )}
             ),
             @ApiResponse(responseCode = "401",
@@ -59,6 +64,23 @@ public class UserController {
     }
 
     //READ (ALL)
+    @Operation(summary = "Retrieves all users", method = "GET")
+    @ApiResponses(value= {
+            @ApiResponse(responseCode = "200",
+                         description = "All users returned successfully",
+                         content = {@Content(mediaType = "application/json",
+                                schema = @Schema(type="array",
+                                        implementation = UserResponseDTO.class
+                                )
+                         )}
+            )
+        }
+    )
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+    
     //READ BY (ID)
     //READ BY (EMAIL)
     //UPDATE BY (ID)

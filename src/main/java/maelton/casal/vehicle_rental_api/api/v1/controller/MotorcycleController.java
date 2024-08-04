@@ -34,6 +34,12 @@ public class MotorcycleController {
                             schema = @Schema(implementation = MotorcycleResponseDTO.class)
                     )}
             ),
+            @ApiResponse(responseCode = "400",
+                         description = "Invalid or corrupted request",
+                         content = {@Content(mediaType = "application/json",
+                                schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
+            ),
             @ApiResponse(responseCode = "409",
                     description = "Informed chassis number already exists",
                     content = {@Content(mediaType = "application/json",
@@ -95,6 +101,12 @@ public class MotorcycleController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = MotorcycleResponseDTO.class)
                     )}
+            ),
+            @ApiResponse(responseCode = "400",
+                         description = "Invalid or corrupted request",
+                         content = {@Content(mediaType = "application/json",
+                                schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
             ),
             @ApiResponse(responseCode = "404",
                     description = "Informed motorcycle UUID does not exist",

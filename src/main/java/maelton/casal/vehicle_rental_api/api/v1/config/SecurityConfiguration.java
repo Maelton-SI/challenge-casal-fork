@@ -17,8 +17,8 @@ public class SecurityConfiguration {
         http
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(HttpMethod.POST, "/**").permitAll() //UNDER TESTS
-                    .requestMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/**").permitAll() //UNDER TESTS .hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/**").permitAll() //UNDER TESTS .hasRole("ADMIN")
                     .anyRequest().permitAll()
             ).csrf(csrf -> csrf
                     .disable()
