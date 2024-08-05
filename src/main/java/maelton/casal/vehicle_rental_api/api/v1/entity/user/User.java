@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,45 +42,8 @@ public class User implements UserDetails {
     String password;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     UserRole role;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        if(this.role == UserRole.SUPER_ADMIN) {
-//            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),
-//                           new SimpleGrantedAuthority("ROLE_USER"));
-//        } else if(this.role == UserRole.ADMIN){
-//            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
-//        } else {
-//            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
-//        }
-        return List.of();
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
-    }
 
     public User(String name, String email, String password, UserRole role) {
         this.name = name;
@@ -87,8 +52,18 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    protected User(String email, String password) {
-        this.email = email;
-        this.password = password;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.getRole()));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 }

@@ -11,9 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-    //Required by Spring Security
-    UserDetails findByEmail(String email);
-
     User save(User user);
     List<User> findAll();
     Optional<User> findById(UUID id);
