@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public class UserService {
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     //AUTHENTICATION //TODO: Correct function return type
     public String authenticateUser(UserLoginDTO userLoginDTO) {
@@ -41,7 +45,10 @@ public class UserService {
     public UserResponseDTO createUser(UserRequestDTO userCreateDTO) {
         if(userRepository.findUserByEmail(userCreateDTO.email()).isEmpty()) {
             User user = userRepository.save(
-                    new User(userCreateDTO.name(), userCreateDTO.email(), userCreateDTO.password(), userCreateDTO.role())
+                    new User(userCreateDTO.name(),
+                             userCreateDTO.email(),
+                             passwordEncoder.encode(userCreateDTO.password()),
+                             userCreateDTO.role())
             );
             return new UserResponseDTO(user.getId(), user.getName(),user.getEmail(), userCreateDTO.role());
         }

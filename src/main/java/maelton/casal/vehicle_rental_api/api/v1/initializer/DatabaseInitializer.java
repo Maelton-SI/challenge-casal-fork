@@ -1,7 +1,7 @@
 package maelton.casal.vehicle_rental_api.api.v1.initializer;
 
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.enums.UserRole;
+import maelton.casal.vehicle_rental_api.api.v1.enums.Role;
 import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailAlreadyExistsException;
 import maelton.casal.vehicle_rental_api.api.v1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,9 @@ public class DatabaseInitializer {
             userService.createUser(
                     new UserRequestDTO(
                             "admin",
-                            "admin@vehiclerentalapi.com",
-                            passwordEncoder.encode("admin"),
-                            UserRole.SUPER_ADMIN
+                            "admin@admin.com",
+                            "admin",
+                            Role.SUPER_ADMIN
                     )
             );
         } catch (UserEmailAlreadyExistsException e) {

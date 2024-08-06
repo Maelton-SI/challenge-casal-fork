@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,13 +28,13 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(HttpMethod.POST, "/v1/auth/**").permitAll()
 
-                    .requestMatchers(HttpMethod.POST, "/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
-                    .requestMatchers(HttpMethod.GET, "/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "USER")
-                    .requestMatchers(HttpMethod.PUT, "/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN", "USER")
+                    .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority("SUPER_ADMIN_", "ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                     .anyRequest().permitAll()
-            );
+            ).httpBasic(Customizer.withDefaults());
 
         return http.build();
     }

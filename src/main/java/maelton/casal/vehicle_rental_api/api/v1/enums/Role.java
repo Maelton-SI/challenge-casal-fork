@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum UserRole {
-    SUPER_ADMIN("SUPER ADMIN"),
+public enum Role {
+    SUPER_ADMIN("SUPER_ADMIN"),
     ADMIN("ADMIN"),
     USER("USER");
 
