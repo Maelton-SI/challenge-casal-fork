@@ -1,4 +1,4 @@
-package maelton.casal.vehicle_rental_api.api.v1.entity.user;
+package maelton.casal.vehicle_rental_api.api.v1.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

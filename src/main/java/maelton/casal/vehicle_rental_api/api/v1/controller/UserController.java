@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserLoginDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
@@ -28,13 +27,6 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
-
-    //AUTHENTICATION
-    @PostMapping("/auth") //TODO: Correct function return type
-    public ResponseEntity<String> authenticateUser(@RequestBody UserLoginDTO userLoginDTO) {
-        //Send login data to authentication, a token is generated for the authentication if it's successful
-        return ResponseEntity.ok(userService.authenticateUser(userLoginDTO));
-    }
 
     //CREATE
     @Operation(summary = "Creates a new user", method = "POST")
