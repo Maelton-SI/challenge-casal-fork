@@ -1,4 +1,4 @@
-package maelton.casal.vehicle_rental_api.api.v1.config.security.service;
+package maelton.casal.vehicle_rental_api.api.v1.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.security.interfaces.RSAPrivateKey;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -18,13 +17,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class JWTService {
-//    @Value("${api.security.token.secret}")
-//    private String secret;
-//
-//    Algorithm algorithm = Algorithm.HMAC256(secret);
-    Algorithm algorithm = Algorithm.HMAC256("secret");
+    @Value("${api.security.jwt.secret}")
+    private String secret;
 
     public String generateToken(Authentication authentication) {
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+
         List<String> authenticationUserRoles = authentication.getAuthorities()
                         .stream()
                         .map(GrantedAuthority::getAuthority)
@@ -42,6 +40,8 @@ public class JWTService {
     }
 
     public String validateToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+
         try {
             return JWT.require(algorithm)
                     .withIssuer("Vehicle Rental API")

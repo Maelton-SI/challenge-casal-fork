@@ -1,6 +1,6 @@
 package maelton.casal.vehicle_rental_api.api.v1.service;
 
-import maelton.casal.vehicle_rental_api.api.v1.config.security.service.JWTService;
+import maelton.casal.vehicle_rental_api.api.v1.config.security.JWTService;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserLoginDTO;

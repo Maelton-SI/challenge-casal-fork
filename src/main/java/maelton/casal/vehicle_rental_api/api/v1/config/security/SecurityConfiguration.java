@@ -1,5 +1,8 @@
 package maelton.casal.vehicle_rental_api.api.v1.config.security;
 
+import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,18 +14,20 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.security.interfaces.RSAPrivateKey;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration {
     @Autowired
     TokenAuthenticationSecurityFilter tokenAuthenticationSecurityFilter;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,8 +50,6 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    //Passwords in database are encoded, AuthenticationManager.authenticate() uses it to compare request passwords
-    //It automatically encodes passwords from requests and matches it with the ones stored in database
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -55,6 +58,11 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> userRepository.findUserByEmail(username).orElseThrow(() -> new UserEmailNotFoundException(username));
     }
 
     @Bean
