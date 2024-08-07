@@ -1,6 +1,7 @@
 package maelton.casal.vehicle_rental_api.api.v1.repository;
 
 import maelton.casal.vehicle_rental_api.api.v1.entity.vehicle.Car;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,8 @@
-package maelton.casal.vehicle_rental_api.api.v1.service;
+package maelton.casal.vehicle_rental_api.api.v1.config.security.service;
 
 import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

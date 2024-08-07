@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import maelton.casal.vehicle_rental_api.api.v1.dto.car.CarRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.car.CarResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
 import maelton.casal.vehicle_rental_api.api.v1.service.CarService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

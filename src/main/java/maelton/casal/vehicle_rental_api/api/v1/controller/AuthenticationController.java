@@ -9,6 +9,7 @@ import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserLoginDTO;
 import maelton.casal.vehicle_rental_api.api.v1.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,5 +1,6 @@
 package maelton.casal.vehicle_rental_api.api.v1.service;
 
+import maelton.casal.vehicle_rental_api.api.v1.config.security.service.JWTService;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserLoginDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserResponseDTO;
@@ -28,6 +29,9 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JWTService jwtService;
+
     //AUTHENTICATION //TODO: Correct function return type
     public String authenticateUser(UserLoginDTO userLoginDTO) {
         //Spring Security itself authenticates the received login data for me
@@ -37,8 +41,7 @@ public class UserService {
                         userLoginDTO.password()
                 )
         );
-        //Now I need a token service provider that generates a token for my authentication
-        return "meuTokenService.generateToken(authentication);";
+        return jwtService.generateToken(authentication);
     }
 
     //CREATE

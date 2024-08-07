@@ -1,10 +1,10 @@
 package maelton.casal.vehicle_rental_api.api.v1.config.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,10 +13,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.security.interfaces.RSAPrivateKey;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration {
+    @Autowired
+    TokenAuthenticationSecurityFilter tokenAuthenticationSecurityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -26,6 +31,8 @@ public class SecurityConfiguration {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(authorize -> authorize
+                    //TODO: Disable authentication for swagger UI
+                    .requestMatchers("/swagger-ui/**", "/api-docs/**", "/v3/api-docs").permitAll()
                     .requestMatchers(HttpMethod.POST, "/v1/auth/**").permitAll()
 
                     .requestMatchers(HttpMethod.POST, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
@@ -34,7 +41,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                     .anyRequest().permitAll()
-            ).httpBasic(Customizer.withDefaults());
+            ).addFilterBefore(tokenAuthenticationSecurityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

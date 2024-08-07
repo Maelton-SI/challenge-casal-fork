@@ -6,6 +6,7 @@ import maelton.casal.vehicle_rental_api.api.v1.entity.vehicle.Motorcycle;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.MotorcycleUUIDNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
 import maelton.casal.vehicle_rental_api.api.v1.repository.MotorcycleRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
