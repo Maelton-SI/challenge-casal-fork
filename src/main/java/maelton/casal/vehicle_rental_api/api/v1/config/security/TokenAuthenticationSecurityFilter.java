@@ -39,8 +39,8 @@ public class TokenAuthenticationSecurityFilter extends OncePerRequestFilter {
                     () -> new UserEmailNotFoundException(authenticationUserEmail)
             );
             Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationUserEmail,
-                    null,
-                    authenticationUser.getAuthorities()
+                            null,
+                            authenticationUser.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
