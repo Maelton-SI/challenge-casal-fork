@@ -1,6 +1,5 @@
 package maelton.casal.vehicle_rental_api.api.v1.config.security;
 
-import com.auth0.jwt.JWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,22 +29,26 @@ public class TokenAuthenticationSecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-    throws ServletException, IOException {
+    throws ServletException, IOException, UserEmailNotFoundException {
 
         String authenticationUserEmail = jwtService.validateToken(this.getToken(request));
-
-        if (authenticationUserEmail != null) {
-            User authenticationUser = userRepository.findUserByEmail(authenticationUserEmail).orElseThrow(
-                    () -> new UserEmailNotFoundException(authenticationUserEmail)
-            );
-            Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationUserEmail,
-                            null,
-                            authenticationUser.getAuthorities()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            if (authenticationUserEmail != null) {
+                User authenticationUser = userRepository.findUserByEmail(authenticationUserEmail).orElseThrow(
+                        () -> new UserEmailNotFoundException(authenticationUserEmail)
+                );
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        authenticationUserEmail,
+                        null,
+                        authenticationUser.getAuthorities()
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (UserEmailNotFoundException e) {
+            filterChain.doFilter(request, response);
+        } finally {
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private String getToken(HttpServletRequest request) {

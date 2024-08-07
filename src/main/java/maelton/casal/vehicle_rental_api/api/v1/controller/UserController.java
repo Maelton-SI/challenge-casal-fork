@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
 import maelton.casal.vehicle_rental_api.api.v1.service.UserService;
 
@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -76,14 +77,88 @@ public class UserController {
         }
     )
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers(
+            @RequestParam(value = "id", required = false) UUID id,
+            @RequestParam(value = "email", required = false) String email
+    ) {
+        return ResponseEntity.ok(userService.getAllUsers(id, email));
+    }
+
+    //READ (BY ID)
+    @Operation(summary = "Retrieves a user by its id", method = "GET")
+    @ApiResponses(value= {
+            @ApiResponse(responseCode = "200",
+                    description = "User returned successfully",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDTO.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "404",
+                    description = "Informed user UUID does not exist",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
+                    )}
+            )
+        }
+    )
+    @GetMapping(value="/{id}", produces = "application/json")
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable("id") UUID id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
     
-    //READ BY (ID)
-    //READ BY (EMAIL)
-    //UPDATE BY (ID)
-    //UPDATE BY (EMAIL)
-    //DELETE BY (ID)
-    //DELETE BY (EMAIL)
+    //UPDATE (BY ID)
+    @Operation(summary = "Updates a user by its id", method = "PUT")
+    @ApiResponses(value= {
+            @ApiResponse(responseCode = "200",
+                    description = "User updated successfully",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDTO.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "400",
+                    description = "Invalid or corrupted request",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "404",
+                    description = "Informed user UUID does not exist",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "409",
+                    description = "Informed email address already exists",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
+                    )}
+            )
+        }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable UUID id,
+                                                    @RequestBody UserRequestDTO userUpdateDTO) {
+        return ResponseEntity.ok(userService.updateUserById(id, userUpdateDTO));
+    }
+
+    
+    //DELETE (BY ID)
+    @Operation(summary = "Deletes a user by its id", method = "DELETE")
+    @ApiResponses(value= {
+            @ApiResponse(responseCode = "200",
+                    description = "User deleted successfully"
+            ),
+            @ApiResponse(responseCode = "404",
+                    description = "Informed user UUID does not exist",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
+                    )}
+            )
+        }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+        userService.deleteUserById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
