@@ -1,15 +1,12 @@
 package maelton.casal.vehicle_rental_api.api.v1.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserLoginDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserLoginDTO;
 import maelton.casal.vehicle_rental_api.api.v1.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.PostMapping;

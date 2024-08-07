@@ -1,4 +1,4 @@
-package maelton.casal.vehicle_rental_api.api.v1.entity.vehicle;
+package maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

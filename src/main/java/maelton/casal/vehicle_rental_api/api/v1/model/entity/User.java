@@ -1,28 +1,22 @@
-package maelton.casal.vehicle_rental_api.api.v1.entity.user;
+package maelton.casal.vehicle_rental_api.api.v1.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import maelton.casal.vehicle_rental_api.api.v1.enums.Role;
+import maelton.casal.vehicle_rental_api.api.v1.model.enums.Role;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor
@@ -47,6 +41,12 @@ public class User implements UserDetails {
     @Setter
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @Setter
+    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    Set<Rental> rentals = new HashSet<>();
 
     public User(String name, String email, String password, Role role) {
         this.name = name;

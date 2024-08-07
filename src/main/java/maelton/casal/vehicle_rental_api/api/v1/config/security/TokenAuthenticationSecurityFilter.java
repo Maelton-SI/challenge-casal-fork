@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import maelton.casal.vehicle_rental_api.api.v1.entity.user.User;
+import maelton.casal.vehicle_rental_api.api.v1.model.entity.User;
 import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.repository.UserRepository;
 

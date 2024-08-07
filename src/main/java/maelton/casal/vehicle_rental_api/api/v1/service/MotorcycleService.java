@@ -1,8 +1,9 @@
 package maelton.casal.vehicle_rental_api.api.v1.service;
 
-import maelton.casal.vehicle_rental_api.api.v1.dto.motorcycle.MotorcycleRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.dto.motorcycle.MotorcycleResponseDTO;
-import maelton.casal.vehicle_rental_api.api.v1.entity.vehicle.Motorcycle;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.IncompleteVehicleDetailsException;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.motorcycle.MotorcycleRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.motorcycle.MotorcycleResponseDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle.Motorcycle;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.MotorcycleUUIDNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
 import maelton.casal.vehicle_rental_api.api.v1.repository.MotorcycleRepository;
@@ -22,6 +23,11 @@ public class MotorcycleService {
 
     //CREATE
     public MotorcycleResponseDTO createMotorcycle(MotorcycleRequestDTO motorcycleCreateDTO) {
+        if(motorcycleCreateDTO.name() == null || motorcycleCreateDTO.name().isEmpty())
+            throw new IncompleteVehicleDetailsException("Vehicle name must be informed");
+        if(motorcycleCreateDTO.chassis() == null || motorcycleCreateDTO.chassis().isEmpty())
+            throw new IncompleteVehicleDetailsException("Chassis number must be informed");
+
         if(motorcycleRepository.findMotorcycleByChassis(motorcycleCreateDTO.chassis()).isEmpty()) {
             Motorcycle motorcycle = motorcycleRepository.save(
                     new Motorcycle(motorcycleCreateDTO.name(),
@@ -66,6 +72,11 @@ public class MotorcycleService {
 
     //UPDATE
     public MotorcycleResponseDTO updateMotorcycle(UUID id, MotorcycleRequestDTO motorcycleUpdateDTO) {
+        if(motorcycleUpdateDTO.name() == null)
+            throw new IncompleteVehicleDetailsException("Vehicle name must be informed");
+        if(motorcycleUpdateDTO.chassis() == null)
+            throw new IncompleteVehicleDetailsException("Chassis number must be informed");
+
         Optional<Motorcycle> optionalMotorcycle = motorcycleRepository.findById(id);
         if(optionalMotorcycle.isPresent()) {
             Motorcycle motorcycle = optionalMotorcycle.get();
@@ -94,6 +105,4 @@ public class MotorcycleService {
         else
             throw new MotorcycleUUIDNotFoundException(id);
     }
-
-
 }

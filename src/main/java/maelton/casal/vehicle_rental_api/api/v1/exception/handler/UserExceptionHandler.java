@@ -1,9 +1,6 @@
 package maelton.casal.vehicle_rental_api.api.v1.exception.handler;
 
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.RequestedUserNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailAlreadyExistsException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.user.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,5 +32,11 @@ public class UserExceptionHandler {
     @ExceptionHandler(UserUUIDNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleUserUUIDNotFoundException(UserUUIDNotFoundException e) {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    //EMAIL OR PASSWORD
+    @ExceptionHandler(IncompleteUserDetailsException.class)
+    public ResponseEntity<ExceptionResponse> handleIncompleteUserDetailsException(IncompleteUserDetailsException e) {
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }

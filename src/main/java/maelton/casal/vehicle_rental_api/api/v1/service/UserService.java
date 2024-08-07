@@ -1,14 +1,11 @@
 package maelton.casal.vehicle_rental_api.api.v1.service;
 
 import maelton.casal.vehicle_rental_api.api.v1.config.security.JWTService;
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserResponseDTO;
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserLoginDTO;
-import maelton.casal.vehicle_rental_api.api.v1.entity.user.User;
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.RequestedUserNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailAlreadyExistsException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.user.*;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserResponseDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserLoginDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.entity.User;
 import maelton.casal.vehicle_rental_api.api.v1.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +49,11 @@ public class UserService {
 
     //CREATE
     public UserResponseDTO createUser(UserRequestDTO userCreateDTO) {
+        if(userCreateDTO.email() == null || userCreateDTO.email().isEmpty())
+            throw new IncompleteUserDetailsException("User email address has not been informed");
+        if(userCreateDTO.password() == null || userCreateDTO.password().isEmpty())
+            throw new IncompleteUserDetailsException("User password has not been informed");
+
         if(userRepository.findUserByEmail(userCreateDTO.email()).isEmpty()) {
             User user = userRepository.save(
                     new User(userCreateDTO.name(),
@@ -139,6 +141,11 @@ public class UserService {
     
     //UPDATE (BY ID)
     public UserResponseDTO updateUserById(UUID id, UserRequestDTO userUpdateDTO) {
+        if(userUpdateDTO.email() == null || userUpdateDTO.email().isEmpty())
+            throw new IncompleteUserDetailsException("User email address has not been informed");
+        if(userUpdateDTO.password() == null || userUpdateDTO.password().isEmpty())
+            throw new IncompleteUserDetailsException("User password has not been informed");
+
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -163,6 +170,11 @@ public class UserService {
 
     //UPDATE (BY EMAIL)
     public UserResponseDTO updateUserByEmail(String email, UserRequestDTO userUpdateDTO) {
+        if(userUpdateDTO.email() == null || userUpdateDTO.email().isEmpty())
+            throw new IncompleteUserDetailsException("User email address has not been informed");
+        if(userUpdateDTO.password() == null || userUpdateDTO.password().isEmpty())
+            throw new IncompleteUserDetailsException("User password has not been informed");
+
         Optional<User> optionalUser = userRepository.findUserByEmail(email);
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();

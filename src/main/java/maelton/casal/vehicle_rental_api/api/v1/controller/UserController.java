@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.dto.user.UserResponseDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
 import maelton.casal.vehicle_rental_api.api.v1.service.UserService;
 

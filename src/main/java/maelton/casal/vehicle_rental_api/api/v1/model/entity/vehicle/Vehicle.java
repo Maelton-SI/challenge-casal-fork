@@ -1,19 +1,19 @@
-package maelton.casal.vehicle_rental_api.api.v1.entity.vehicle;
+package maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.*;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import maelton.casal.vehicle_rental_api.api.v1.model.entity.Rental;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -29,7 +29,12 @@ public abstract class Vehicle {
     @Setter
     protected String name;
 
-    //TODO: ALTER TABLE tab_vehicle ADD CONSTRAINT tab_vehicle_nn_chassis CHECK (chassis IS NOT NULL)
+    @Setter
+    @JsonIgnore
+    @JsonProperty()
+    @OneToMany(mappedBy = "vehicle", fetch=FetchType.LAZY)
+    private Set<Rental> rentals = new HashSet<>();
+
     @Setter
     @Column(name = "num_chassis", unique = true)
     protected String chassis;
