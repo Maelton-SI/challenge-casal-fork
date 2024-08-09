@@ -1,7 +1,6 @@
 package maelton.casal.vehicle_rental_api.api.v1.config.security;
 
 import maelton.casal.vehicle_rental_api.api.v1.config.security.jwt.TokenAuthenticationSecurityFilter;
-import maelton.casal.vehicle_rental_api.api.v1.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,9 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
     @Autowired
     TokenAuthenticationSecurityFilter tokenAuthenticationSecurityFilter;
-
-    @Autowired
-    UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

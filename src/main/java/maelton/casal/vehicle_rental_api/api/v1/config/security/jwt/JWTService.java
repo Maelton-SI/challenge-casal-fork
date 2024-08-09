@@ -10,8 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
+
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +22,7 @@ public class JWTService {
     @Value("${api.security.jwt.secret}")
     private String secret;
 
-    public String generateToken(Authentication authentication) {
+    public JSONWebTokenDTO generateToken(Authentication authentication) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
         List<String> authenticationUserRoles = authentication.getAuthorities()
@@ -28,12 +30,22 @@ public class JWTService {
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList());
         try {
-            return JWT.create()
+            ZonedDateTime tokenExpirationDateTime = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).plusHours(2);
+
+            String token = JWT.create()
                     .withIssuer("Vehicle Rental API")
                     .withSubject(authentication.getName()) //user email
                     .withClaim("Roles", authenticationUserRoles)
-                    .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
+                    .withExpiresAt(tokenExpirationDateTime.toInstant())
                     .sign(algorithm);
+
+            return new JSONWebTokenDTO(
+                    token,
+                    "Bearer",
+                    getTokenExpiration(tokenExpirationDateTime),
+                    authentication.getName(),
+                    authenticationUserRoles
+            );
         } catch (JWTCreationException e) {
             throw new RuntimeException("JWT authentication failed: ", e);
         }
@@ -51,5 +63,9 @@ public class JWTService {
         } catch(JWTVerificationException e) {
             return null;
         }
+    }
+
+    private String getTokenExpiration(ZonedDateTime tokenExpirationDateTime) {
+        return DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss z").format(tokenExpirationDateTime);
     }
 }

@@ -2,19 +2,17 @@ package maelton.casal.vehicle_rental_api.api.v1.service;
 
 import jakarta.transaction.Transactional;
 
-import maelton.casal.vehicle_rental_api.api.v1.config.security.jwt.JWTService;
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.*;
+import maelton.casal.vehicle_rental_api.api.v1.exception.user.IncompleteUserDetailsException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailAlreadyExistsException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserResponseDTO;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserLoginDTO;
 import maelton.casal.vehicle_rental_api.api.v1.model.entity.User;
 import maelton.casal.vehicle_rental_api.api.v1.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,31 +27,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JWTService jwtService;
-
-    //AUTHENTICATION //TODO: Correct function return type
-    public String authenticateUser(UserLoginDTO userLoginDTO) {
-        //Spring Security itself authenticates the received login data for me
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            userLoginDTO.email(),
-                            userLoginDTO.password()
-                    )
-            );
-
-            return jwtService.generateToken(authentication);
-        } catch (AuthenticationException e) {
-            throw new UserAuthenticationFailureException("Email or password incorrect!");
-        }
-    }
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     //CREATE
     @Transactional

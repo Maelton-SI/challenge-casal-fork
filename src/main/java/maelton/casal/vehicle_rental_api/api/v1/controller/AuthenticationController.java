@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import maelton.casal.vehicle_rental_api.api.v1.config.security.jwt.JSONWebTokenDTO;
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserLoginDTO;
+import maelton.casal.vehicle_rental_api.api.v1.service.AuthenticationService;
 import maelton.casal.vehicle_rental_api.api.v1.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
     //AUTHENTICATION
     @Operation(summary = "Authenticates a user", method = "POST")
     @ApiResponses(value= {
@@ -41,9 +46,8 @@ public class AuthenticationController {
             )
         }
     )
-    @PostMapping("/users") //TODO: Correct function returning type
-    public ResponseEntity<String> authenticateUser(@RequestBody UserLoginDTO userLoginDTO) {
-        //Sends login data to authentication, a token is generated for the authentication if it's successful
-        return ResponseEntity.ok(userService.authenticateUser(userLoginDTO));
+    @PostMapping("/users")
+    public ResponseEntity<JSONWebTokenDTO> authenticateUser(@RequestBody UserLoginDTO userLoginDTO) {
+        return ResponseEntity.ok(authenticationService.authenticateUser(userLoginDTO));
     }
 }
