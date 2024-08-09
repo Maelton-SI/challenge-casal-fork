@@ -1,8 +1,8 @@
 package maelton.casal.vehicle_rental_api.api.v1.initializer;
 
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.car.CarRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.motorcycle.MotorcycleRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.car.CarRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.motorcycle.MotorcycleRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.model.enums.Role;
 import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailAlreadyExistsException;

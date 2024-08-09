@@ -3,12 +3,13 @@ package maelton.casal.vehicle_rental_api.api.v1.service;
 import jakarta.transaction.Transactional;
 
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.IncompleteVehicleDetailsException;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.motorcycle.MotorcycleRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.motorcycle.MotorcycleResponseDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.motorcycle.MotorcycleRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.motorcycle.MotorcycleResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle.Motorcycle;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.MotorcycleUUIDNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
 import maelton.casal.vehicle_rental_api.api.v1.repository.MotorcycleRepository;
+import maelton.casal.vehicle_rental_api.api.v1.repository.VehicleRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ import java.util.stream.Collectors;
 @Service
 public class MotorcycleService {
     @Autowired
+    VehicleRepository vehicleRepository;
+
+    @Autowired
     private MotorcycleRepository motorcycleRepository;
 
     //CREATE
@@ -31,7 +35,7 @@ public class MotorcycleService {
         if(motorcycleCreateDTO.chassis() == null || motorcycleCreateDTO.chassis().isEmpty())
             throw new IncompleteVehicleDetailsException("Chassis number must be informed");
 
-        if(motorcycleRepository.findMotorcycleByChassis(motorcycleCreateDTO.chassis()).isEmpty()) {
+        if(!vehicleRepository.existsVehicleByChassis(motorcycleCreateDTO.chassis())) {
             Motorcycle motorcycle = motorcycleRepository.save(
                     new Motorcycle(
                             motorcycleCreateDTO.model(),
@@ -90,7 +94,7 @@ public class MotorcycleService {
         if(optionalMotorcycle.isPresent()) {
             Motorcycle motorcycle = optionalMotorcycle.get();
             if(!motorcycleUpdateDTO.chassis().equals(motorcycle.getChassis()))
-                if(motorcycleRepository.existsMotorcycleByChassis(motorcycleUpdateDTO.chassis()))
+                if(vehicleRepository.existsVehicleByChassis(motorcycleUpdateDTO.chassis()))
                     throw new ChassisNumberAlreadyExistsException(motorcycleUpdateDTO.chassis());
             motorcycle.setModel(motorcycleUpdateDTO.model());
             motorcycle.setChassis(motorcycleUpdateDTO.chassis());

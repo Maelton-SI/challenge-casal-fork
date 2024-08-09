@@ -3,12 +3,13 @@ package maelton.casal.vehicle_rental_api.api.v1.service;
 import jakarta.transaction.Transactional;
 
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.IncompleteVehicleDetailsException;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.car.CarRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.car.CarResponseDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.car.CarRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.car.CarResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle.Car;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.CarUUIDNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
 import maelton.casal.vehicle_rental_api.api.v1.repository.CarRepository;
+import maelton.casal.vehicle_rental_api.api.v1.repository.VehicleRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ import java.util.stream.Collectors;
 @Service
 public class CarService {
     @Autowired
+    private VehicleRepository vehicleRepository;
+
+    @Autowired
     private CarRepository carRepository;
 
     //CREATE
@@ -31,7 +35,7 @@ public class CarService {
         if(carCreateDTO.chassis() == null || carCreateDTO.chassis().isEmpty())
             throw new IncompleteVehicleDetailsException("Chassis number must be informed");
 
-        if(carRepository.findCarByChassis(carCreateDTO.chassis()).isEmpty()) {
+        if(!vehicleRepository.existsVehicleByChassis(carCreateDTO.chassis())) {
             Car car = carRepository.save(
                     new Car(carCreateDTO.model(), carCreateDTO.chassis(), carCreateDTO.numberOfDoors())
             );
@@ -81,7 +85,7 @@ public class CarService {
         if(optionalCar.isPresent()) {
             Car car = optionalCar.get();
                 if(!carUpdateDTO.chassis().equals(car.getChassis()))
-                    if(carRepository.existsCarByChassis(carUpdateDTO.chassis()))
+                    if(vehicleRepository.existsVehicleByChassis(carUpdateDTO.chassis()))
                         throw new ChassisNumberAlreadyExistsException(carUpdateDTO.chassis());
                 car.setModel(carUpdateDTO.model());
                 car.setChassis(carUpdateDTO.chassis());

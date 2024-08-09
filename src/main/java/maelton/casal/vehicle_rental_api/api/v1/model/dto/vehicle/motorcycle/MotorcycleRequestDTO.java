@@ -1,4 +1,4 @@
-package maelton.casal.vehicle_rental_api.api.v1.model.dto.motorcycle;
+package maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.motorcycle;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
