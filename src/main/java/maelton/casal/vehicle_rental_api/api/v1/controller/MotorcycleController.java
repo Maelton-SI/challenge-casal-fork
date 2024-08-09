@@ -133,7 +133,7 @@ public class MotorcycleController {
     //DELETE
     @Operation(summary = "Deletes a motorcycle by its id", method = "DELETE")
     @ApiResponses(value= {
-            @ApiResponse(responseCode = "200",
+            @ApiResponse(responseCode = "204",
                     description = "Motorcycle deleted successfully"
             ),
             @ApiResponse(responseCode = "404",

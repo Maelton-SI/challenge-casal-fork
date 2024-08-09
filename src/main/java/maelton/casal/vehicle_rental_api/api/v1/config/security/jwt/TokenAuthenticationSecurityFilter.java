@@ -1,4 +1,4 @@
-package maelton.casal.vehicle_rental_api.api.v1.config.security;
+package maelton.casal.vehicle_rental_api.api.v1.config.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

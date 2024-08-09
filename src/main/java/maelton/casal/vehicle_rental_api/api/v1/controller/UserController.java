@@ -73,6 +73,12 @@ public class UserController {
                                         implementation = UserResponseDTO.class
                                 )
                          )}
+            ),
+            @ApiResponse(responseCode = "404",
+                    description = "Queried user UUID or email address not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
+                    )}
             )
         }
     )
@@ -145,7 +151,7 @@ public class UserController {
     //DELETE (BY ID)
     @Operation(summary = "Deletes a user by its id", method = "DELETE")
     @ApiResponses(value= {
-            @ApiResponse(responseCode = "200",
+            @ApiResponse(responseCode = "204",
                     description = "User deleted successfully"
             ),
             @ApiResponse(responseCode = "404",

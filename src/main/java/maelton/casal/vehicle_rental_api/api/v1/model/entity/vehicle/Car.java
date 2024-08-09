@@ -18,8 +18,8 @@ public class Car extends Vehicle {
     @Column(name = "num_doors")
     private int numberOfDoors;
 
-    public Car(String name, String chassis, int numberOfDoors) {
-        this.name = name;
+    public Car(String model, String chassis, int numberOfDoors) {
+        this.model = model;
         this.chassis = chassis;
         this.numberOfDoors = numberOfDoors;
     }

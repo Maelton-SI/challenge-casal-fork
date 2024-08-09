@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class UserExceptionHandler {
 
+    //AUTHENTICATION
+    @ExceptionHandler(UserAuthenticationFailureException.class)
+    public ResponseEntity<ExceptionResponse> handleUserEmailAlreadyExistsException(UserAuthenticationFailureException e) {
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
     //EMAIL ALREADY EXISTS
     @ExceptionHandler(UserEmailAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleUserEmailAlreadyExistsException(UserEmailAlreadyExistsException e) {

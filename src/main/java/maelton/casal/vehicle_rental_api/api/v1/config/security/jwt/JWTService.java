@@ -1,4 +1,4 @@
-package maelton.casal.vehicle_rental_api.api.v1.config.security;
+package maelton.casal.vehicle_rental_api.api.v1.config.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

@@ -1,6 +1,12 @@
 package maelton.casal.vehicle_rental_api.api.v1.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle.Vehicle;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -25,23 +31,19 @@ public class Rental {
     @JoinColumn(name="customer_id")
     private User customer;
 
-    private String customerEmail;
-
     @Setter
     @ManyToOne
     @JoinColumn(name="vehicle_id")
     private Vehicle vehicle;
 
-    private String vehicleName;
+    @Setter
+    LocalDate rentalStartDate;
 
-    LocalDateTime rentalStartDate;
-    LocalDateTime rentalEndDate;
+    @Setter
+    LocalDate rentalEndDate;
 
-    public Rental(User customer, Vehicle vehicle, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate) {
+    public Rental(User customer, Vehicle vehicle, LocalDate rentalStartDate, LocalDate rentalEndDate) {
         this.customer = customer;
-        this.customerEmail = this.customer.getEmail();
-
-        this.vehicleName = vehicle.getName();
         this.vehicle = vehicle;
 
         this.rentalStartDate = rentalStartDate;

@@ -1,6 +1,8 @@
 package maelton.casal.vehicle_rental_api.api.v1.service;
 
-import maelton.casal.vehicle_rental_api.api.v1.config.security.JWTService;
+import jakarta.transaction.Transactional;
+
+import maelton.casal.vehicle_rental_api.api.v1.config.security.jwt.JWTService;
 import maelton.casal.vehicle_rental_api.api.v1.exception.user.*;
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserRequestDTO;
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserResponseDTO;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,16 +41,22 @@ public class UserService {
     //AUTHENTICATION //TODO: Correct function return type
     public String authenticateUser(UserLoginDTO userLoginDTO) {
         //Spring Security itself authenticates the received login data for me
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        userLoginDTO.email(),
-                        userLoginDTO.password()
-                )
-        );
-        return jwtService.generateToken(authentication);
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userLoginDTO.email(),
+                            userLoginDTO.password()
+                    )
+            );
+
+            return jwtService.generateToken(authentication);
+        } catch (AuthenticationException e) {
+            throw new UserAuthenticationFailureException("Email or password incorrect!");
+        }
     }
 
     //CREATE
+    @Transactional
     public UserResponseDTO createUser(UserRequestDTO userCreateDTO) {
         if(userCreateDTO.email() == null || userCreateDTO.email().isEmpty())
             throw new IncompleteUserDetailsException("User email address has not been informed");
@@ -67,8 +76,9 @@ public class UserService {
     }
 
     //READ (ALL)
+    @Transactional
     public List<UserResponseDTO> getAllUsers(UUID id, String email) {
-        if(id == null && email == null) {
+        if(id == null && (email == null || email.isEmpty())) {
             return userRepository.findAll()
                     .stream()
                     .map(user -> new UserResponseDTO(
@@ -80,36 +90,37 @@ public class UserService {
         }
 
         if(id != null) {
-            Optional<User> optionalUser = userRepository.findById(id);
-            if (optionalUser.isPresent()) {
-                User user = optionalUser.get();
-                return Collections.singletonList(
-                        new UserResponseDTO(
-                                user.getId(),
-                                user.getName(),
-                                user.getEmail(),
-                                user.getRole())
-                );
-            }
+            User user = userRepository.findById(id).orElseThrow(
+                    () -> new UserUUIDNotFoundException(id)
+            );
+
+            return Collections.singletonList(
+                    new UserResponseDTO(
+                            user.getId(),
+                            user.getName(),
+                            user.getEmail(),
+                            user.getRole()
+                    )
+            );
         }
 
-        if(email != null) {
-            Optional<User> optionalUser = userRepository.findUserByEmail(email);
-            if (optionalUser.isPresent()) {
-                User user = optionalUser.get();
-                return Collections.singletonList(
-                        new UserResponseDTO(
-                                user.getId(),
-                                user.getName(),
-                                user.getEmail(),
-                                user.getRole())
-                );
-            }
-        }
-        throw new RequestedUserNotFoundException(id, email);
+
+        User user = userRepository.findUserByEmail(email).orElseThrow(
+                () -> new UserEmailNotFoundException(email)
+        );
+
+        return Collections.singletonList(
+                new UserResponseDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getRole()
+                )
+        );
     }
     
     //READ (BY ID)
+    @Transactional
     public UserResponseDTO getUserById(UUID id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isPresent()) {
@@ -125,6 +136,7 @@ public class UserService {
     }
     
     //READ (BY EMAIL)
+    @Transactional
     public UserResponseDTO getUserByEmail(String email) {
         Optional<User> optionalUser = userRepository.findUserByEmail(email);
         if(optionalUser.isPresent()) {
@@ -140,6 +152,7 @@ public class UserService {
     }
     
     //UPDATE (BY ID)
+    @Transactional
     public UserResponseDTO updateUserById(UUID id, UserRequestDTO userUpdateDTO) {
         if(userUpdateDTO.email() == null || userUpdateDTO.email().isEmpty())
             throw new IncompleteUserDetailsException("User email address has not been informed");
@@ -169,6 +182,7 @@ public class UserService {
     }
 
     //UPDATE (BY EMAIL)
+    @Transactional
     public UserResponseDTO updateUserByEmail(String email, UserRequestDTO userUpdateDTO) {
         if(userUpdateDTO.email() == null || userUpdateDTO.email().isEmpty())
             throw new IncompleteUserDetailsException("User email address has not been informed");
@@ -198,6 +212,7 @@ public class UserService {
     }
 
     //DELETE (BY ID)
+    @Transactional
     public void deleteUserById(UUID id) {
         if(userRepository.existsUserById(id))
             userRepository.deleteById(id);
@@ -206,6 +221,7 @@ public class UserService {
     }
 
     //DELETE (BY EMAIL)
+    @Transactional
     public void deleteUserByEmail(String email) {
         if(userRepository.existsUserByEmail(email))
             userRepository.deleteByEmail(email);

@@ -1,6 +1,6 @@
 package maelton.casal.vehicle_rental_api.api.v1.config.security;
 
-import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserEmailNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.config.security.jwt.TokenAuthenticationSecurityFilter;
 import maelton.casal.vehicle_rental_api.api.v1.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,6 +38,8 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(HttpMethod.POST, "/v1/auth/**").permitAll()
 
+                    .requestMatchers(HttpMethod.POST, "/v1/rentals").hasAnyAuthority("SUPER_ADMIN", "ADMIN", "USER"
+                            )
                     .requestMatchers(HttpMethod.POST, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
                     .requestMatchers(HttpMethod.GET, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN", "USER")
                     .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
@@ -58,11 +59,6 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> userRepository.findUserByEmail(username).orElseThrow(() -> new UserEmailNotFoundException(username));
     }
 
     @Bean

@@ -18,8 +18,8 @@ public class Motorcycle extends Vehicle {
     @Column(name = "tank_capacity")
     private int tankCapacity;
 
-    public Motorcycle(String name, String chassis, int tankCapacity) {
-        this.name = name;
+    public Motorcycle(String model, String chassis, int tankCapacity) {
+        this.model = model;
         this.chassis = chassis;
         this.tankCapacity = tankCapacity;
     }

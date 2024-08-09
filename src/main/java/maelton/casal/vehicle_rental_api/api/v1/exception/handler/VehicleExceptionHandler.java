@@ -1,9 +1,6 @@
 package maelton.casal.vehicle_rental_api.api.v1.exception.handler;
 
-import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.CarUUIDNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.ChassisNumberAlreadyExistsException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.IncompleteVehicleDetailsException;
-import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.MotorcycleUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +9,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class VehicleExceptionHandler {
+
+    //VEHICLE
+    @ExceptionHandler(VehicleUUIDNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleVehicleUUIDNotFoundException(VehicleUUIDNotFoundException e) {
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
 
     //CAR
     @ExceptionHandler(CarUUIDNotFoundException.class)
@@ -25,10 +28,16 @@ public class VehicleExceptionHandler {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    //CHASSIS
+    //CHASSIS ALREADY EXISTS
     @ExceptionHandler(ChassisNumberAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleChassisNumberAlreadyExistsException(ChassisNumberAlreadyExistsException e) {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    //CHASSIS NOT FOUND
+    @ExceptionHandler(VehicleChassisNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleVehicleChassisNotFoundException(VehicleChassisNotFoundException e) {
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     //NAME OR CHASSIS
