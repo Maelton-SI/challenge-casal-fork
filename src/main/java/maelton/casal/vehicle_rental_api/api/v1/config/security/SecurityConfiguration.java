@@ -34,14 +34,20 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(HttpMethod.POST, "/v1/auth/**").permitAll()
 
-                    .requestMatchers(HttpMethod.POST, "/v1/rentals").hasAnyAuthority("SUPER_ADMIN", "ADMIN", "USER"
-                            )
-                    .requestMatchers(HttpMethod.POST, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
                     .requestMatchers(HttpMethod.GET, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN", "USER")
                     .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
-                    .anyRequest().permitAll()
+                    .requestMatchers(HttpMethod.POST, "/v1/users").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/v1/cars").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/v1/motorcycles").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/v1/rentals").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+
+                    //ADMINS CANT RENT DIRECTLY (USERS AND SUPERS CAN), THEY CAN CREATE AND UPDATED RENTALS THOUGH
+                    .requestMatchers(HttpMethod.POST, "/v1/rentals/car").hasAnyAuthority("SUPER_ADMIN", "USER")
+                    .requestMatchers(HttpMethod.POST, "/v1/rentals/motorcycle").hasAnyAuthority("SUPER_ADMIN", "USER")
+
+                    .anyRequest().authenticated()
             ).addFilterBefore(tokenAuthenticationSecurityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
