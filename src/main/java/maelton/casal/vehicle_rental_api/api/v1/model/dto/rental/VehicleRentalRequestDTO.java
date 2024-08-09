@@ -5,15 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Schema(description = "DTO used to represent rental registries in responses")
-public record RentalResponseDTO(
-        UUID rentalId,
+@Schema(description = "DTO for creating or updating rental registries")
+public record VehicleRentalRequestDTO(
         UUID userId,
-        String userEmail,
-        String userName,
         UUID vehicleId,
-        String vehicleChassis,
-        String vehicleModel,
         LocalDate rentalStartDate,
         LocalDate rentalEndDate
 ) {}

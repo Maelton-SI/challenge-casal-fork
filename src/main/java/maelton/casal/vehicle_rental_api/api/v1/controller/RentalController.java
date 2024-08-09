@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.RentalRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.RentalResponseDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.CarRentalRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.MotorcycleRentalRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.VehicleRentalRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.VehicleRentalResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.service.RentalService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,25 +30,81 @@ public class RentalController {
     RentalService rentalService;
 
     //CREATE
-    @Operation(summary = "Creates a new rental registry", method = "POST")
+    @Operation(summary = "Creates a new rental registry by specifying customer and renting vehicle", method = "POST")
     @ApiResponses(value= {
             @ApiResponse(responseCode = "201",
-                    description = "New rental registry created successfully",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = RentalResponseDTO.class)
-                    )}
+                         description = "New rental registry created successfully",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = VehicleRentalResponseDTO.class)
+                         )}
             ),
             @ApiResponse(responseCode = "404",
-                    description = "Informed rental id or vehicle id not found",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ExceptionResponse.class)
-                    )}
+                         description = "Informed rental id or vehicle id not found",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
             )
         }
     )
     @PostMapping(produces = "application/json")
-    public ResponseEntity<RentalResponseDTO> createRental(@RequestBody RentalRequestDTO rentalCreateDTO) {
+    public ResponseEntity<VehicleRentalResponseDTO> createRental(@RequestBody VehicleRentalRequestDTO rentalCreateDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(rentalService.createRental(rentalCreateDTO));
+    }
+
+    //CREATE CAR RENTAL
+    @Operation(summary = "Allows a JWT authenticated user to rent a car by specifying its UUID", method = "POST")
+    @ApiResponses(value= {
+            @ApiResponse(responseCode = "201",
+                         description = "New car rental registry created successfully",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = VehicleRentalResponseDTO.class)
+                         )}
+            ),
+            @ApiResponse(responseCode = "404",
+                         description = "Informed car UUID does not exist",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
+            ),
+            @ApiResponse(responseCode = "500",
+                         description = "Internal server error while trying to get customer",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
+            )
+        }
+    )
+    @PostMapping(value="/car", produces = "application/json")
+    public ResponseEntity<VehicleRentalResponseDTO> createCarRental(@RequestBody CarRentalRequestDTO carRentalCreateDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(rentalService.createCarRental(carRentalCreateDTO));
+    }
+
+    //CREATE MOTORCYCLE RENTAL
+    @Operation(summary = "Allows a JWT authenticated user to rent a motorcycle by specifying its UUID", method = "POST")
+    @ApiResponses(value= {
+            @ApiResponse(responseCode = "201",
+                    description = "New motorcycle rental registry created successfully",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = VehicleRentalResponseDTO.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "404",
+                         description = "Informed motorcycle UUID does not exist",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
+            ),
+            @ApiResponse(responseCode = "500",
+                         description = "Internal server error while trying to get customer",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
+            )
+        }
+    )
+    @PostMapping(value="/motorcycle",produces = "application/json")
+    public ResponseEntity<VehicleRentalResponseDTO> createMotorcycleRental(@RequestBody MotorcycleRentalRequestDTO motorcycleRentalCreateDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(rentalService.createMotorcycleRental(motorcycleRentalCreateDTO));
     }
 
     //READ (ALL)
@@ -56,7 +114,7 @@ public class RentalController {
                     description = "All rental registries returned successfully",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(type="array",
-                                    implementation = RentalResponseDTO.class
+                                    implementation = VehicleRentalResponseDTO.class
                             )
                     )}
             ),
@@ -69,7 +127,7 @@ public class RentalController {
         }
     )
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<RentalResponseDTO>> getAllRentals(
+    public ResponseEntity<List<VehicleRentalResponseDTO>> getAllRentals(
             @RequestParam(value = "customerEmail", required = false) String customerEmail,
             @RequestParam(value = "vehicleChassis", required = false) String vehicleChassis
     ) {
@@ -80,21 +138,21 @@ public class RentalController {
     @Operation(summary = "Retrieves a rental registry by its id", method = "GET")
     @ApiResponses(value= {
             @ApiResponse(responseCode = "200",
-                    description = "Rental registry returned successfully",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = RentalResponseDTO.class)
-                    )}
+                         description = "Rental registry returned successfully",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = VehicleRentalResponseDTO.class)
+                         )}
             ),
             @ApiResponse(responseCode = "404",
-                    description = "Informed rental UUID does not exist",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ExceptionResponse.class)
-                    )}
+                         description = "Informed rental UUID does not exist",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
             )
         }
     )
     @GetMapping(value="/{id}", produces = "application/json")
-    public ResponseEntity<RentalResponseDTO> getRentalById(@PathVariable("id") UUID id) {
+    public ResponseEntity<VehicleRentalResponseDTO> getRentalById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(rentalService.getRentalById(id));
     }
 
@@ -102,28 +160,28 @@ public class RentalController {
     @Operation(summary = "Updates a rental registry by its id", method = "PUT")
     @ApiResponses(value= {
             @ApiResponse(responseCode = "200",
-                    description = "Rental registry updated successfully",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = RentalResponseDTO.class)
-                    )}
+                         description = "Rental registry updated successfully",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = VehicleRentalResponseDTO.class)
+                         )}
             ),
             @ApiResponse(responseCode = "400",
-                    description = "Invalid or corrupted request",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ExceptionResponse.class)
-                    )}
+                         description = "Invalid or corrupted request",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
             ),
             @ApiResponse(responseCode = "404",
-                    description = "Informed rental UUID does not exist",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ExceptionResponse.class)
-                    )}
+                         description = "Informed rental UUID does not exist",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
             )
         }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<RentalResponseDTO> updateRental(@PathVariable UUID id,
-                                                    @RequestBody RentalRequestDTO rentalUpdateDTO) {
+    public ResponseEntity<VehicleRentalResponseDTO> updateRental(@PathVariable UUID id,
+                                                                 @RequestBody VehicleRentalRequestDTO rentalUpdateDTO) {
         return ResponseEntity.ok(rentalService.updateRental(id, rentalUpdateDTO));
     }
 
@@ -131,13 +189,13 @@ public class RentalController {
     @Operation(summary = "Deletes a rental registry by its id", method = "DELETE")
     @ApiResponses(value= {
             @ApiResponse(responseCode = "204",
-                    description = "Rental deleted successfully"
+                         description = "Rental deleted successfully"
             ),
             @ApiResponse(responseCode = "404",
-                    description = "Informed rental UUID does not exist",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ExceptionResponse.class)
-                    )}
+                         description = "Informed rental UUID does not exist",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
             )
         }
     )

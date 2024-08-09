@@ -2,19 +2,25 @@ package maelton.casal.vehicle_rental_api.api.v1.service;
 
 import jakarta.transaction.Transactional;
 
+import maelton.casal.vehicle_rental_api.api.v1.exception.rental.RentalException;
 import maelton.casal.vehicle_rental_api.api.v1.exception.user.UserUUIDNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.exception.rental.RentalUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.CarUUIDNotFoundException;
+import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.MotorcycleUUIDNotFoundException;
 import maelton.casal.vehicle_rental_api.api.v1.exception.vehicle.VehicleUUIDNotFoundException;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.RentalRequestDTO;
-import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.RentalResponseDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.CarRentalRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.MotorcycleRentalRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.VehicleRentalRequestDTO;
+import maelton.casal.vehicle_rental_api.api.v1.model.dto.rental.VehicleRentalResponseDTO;
 import maelton.casal.vehicle_rental_api.api.v1.model.entity.Rental;
 import maelton.casal.vehicle_rental_api.api.v1.model.entity.User;
+import maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle.Car;
+import maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle.Motorcycle;
 import maelton.casal.vehicle_rental_api.api.v1.model.entity.vehicle.Vehicle;
-import maelton.casal.vehicle_rental_api.api.v1.repository.RentalRepository;
-import maelton.casal.vehicle_rental_api.api.v1.repository.UserRepository;
-import maelton.casal.vehicle_rental_api.api.v1.repository.VehicleRepository;
+import maelton.casal.vehicle_rental_api.api.v1.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,10 +36,16 @@ public class RentalService {
 
     @Autowired
     private VehicleRepository vehicleRepository;
+
+    @Autowired
+    private CarRepository carRepository;
+
+    @Autowired
+    private MotorcycleRepository motorcycleRepository;
     
     //CREATE
     @Transactional
-    public RentalResponseDTO createRental(RentalRequestDTO rentalCreateDTO) {
+    public VehicleRentalResponseDTO createRental(VehicleRentalRequestDTO rentalCreateDTO) {
         User rentalCustomer = userRepository.findById(rentalCreateDTO.userId()).orElseThrow(
                 () -> new UserUUIDNotFoundException(rentalCreateDTO.userId())
         );
@@ -51,7 +63,85 @@ public class RentalService {
 
         rentalRepository.save(rental);
         
-        return new RentalResponseDTO(
+        return new VehicleRentalResponseDTO(
+                rental.getId(),
+                rental.getCustomer().getId(),
+                rental.getCustomer().getEmail(),
+                rental.getCustomer().getName(),
+                rental.getVehicle().getId(),
+                rental.getVehicle().getChassis(),
+                rental.getVehicle().getModel(),
+                rental.getRentalStartDate(),
+                rental.getRentalEndDate()
+        );
+    }
+
+    //CREATE CAR RENTAL
+    @Transactional
+    public VehicleRentalResponseDTO createCarRental(CarRentalRequestDTO carRentalCreateDTO) {
+        String customerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User rentalCustomer = userRepository.findUserByEmail(customerEmail).orElseThrow(
+                () -> new RentalException("Could not rent car (UUID: '"
+                                        + carRentalCreateDTO.carId() + "')"
+                                        + " to user (email address: '"
+                                        + customerEmail + "')"
+                )
+        );
+
+        Car rentalCar = carRepository.findById(carRentalCreateDTO.carId()).orElseThrow(
+                () -> new CarUUIDNotFoundException(carRentalCreateDTO.carId())
+        );
+
+        Rental rental = new Rental(
+                rentalCustomer,
+                rentalCar,
+                carRentalCreateDTO.rentalStartDate(),
+                carRentalCreateDTO.rentalEndDate()
+        );
+
+        rentalRepository.save(rental);
+
+        return new VehicleRentalResponseDTO(
+                rental.getId(),
+                rental.getCustomer().getId(),
+                rental.getCustomer().getEmail(),
+                rental.getCustomer().getName(),
+                rental.getVehicle().getId(),
+                rental.getVehicle().getChassis(),
+                rental.getVehicle().getModel(),
+                rental.getRentalStartDate(),
+                rental.getRentalEndDate()
+        );
+    }
+
+    //CREATE MOTORCYCLE RENTAL
+    @Transactional
+    public VehicleRentalResponseDTO createMotorcycleRental(MotorcycleRentalRequestDTO motorcycleRentalCreateDTO) {
+        String customerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User rentalCustomer = userRepository.findUserByEmail(customerEmail).orElseThrow(
+                () -> new RentalException("Could not rent motorcycle (UUID: '"
+                                        + motorcycleRentalCreateDTO.motorcycleId() + "')"
+                                        + " to user (email address: '"
+                                        + customerEmail + "')"
+                )
+        );
+
+        Motorcycle rentalMotorcycle = motorcycleRepository.findById(motorcycleRentalCreateDTO.motorcycleId()).orElseThrow(
+                () -> new MotorcycleUUIDNotFoundException(motorcycleRentalCreateDTO.motorcycleId())
+        );
+
+        Rental rental = new Rental(
+                rentalCustomer,
+                rentalMotorcycle,
+                motorcycleRentalCreateDTO.rentalStartDate(),
+                motorcycleRentalCreateDTO.rentalEndDate()
+        );
+
+        rentalRepository.save(rental);
+
+        return new VehicleRentalResponseDTO(
                 rental.getId(),
                 rental.getCustomer().getId(),
                 rental.getCustomer().getEmail(),
@@ -66,14 +156,14 @@ public class RentalService {
 
     //READ (ALL)
     @Transactional
-    public List<RentalResponseDTO> getAllRentals(String customerEmail, String vehicleChassis) {
+    public List<VehicleRentalResponseDTO> getAllRentals(String customerEmail, String vehicleChassis) {
         if(
             (customerEmail == null || customerEmail.isEmpty()) &&
             (vehicleChassis == null || vehicleChassis.isEmpty())
         ) {
             return rentalRepository.findAll()
                     .stream()
-                    .map(rental -> new RentalResponseDTO(
+                    .map(rental -> new VehicleRentalResponseDTO(
                             rental.getId(),
                             rental.getCustomer().getId(),
                             rental.getCustomer().getEmail(),
@@ -90,10 +180,10 @@ public class RentalService {
             (customerEmail != null && !customerEmail.isEmpty()) &&
             (vehicleChassis != null && !vehicleChassis.isEmpty())
         ) {
-            List<RentalResponseDTO> rentals = rentalRepository.findRentalByCustomerEmail(customerEmail)
+            List<VehicleRentalResponseDTO> rentals = rentalRepository.findRentalByCustomerEmail(customerEmail)
                                     .stream()
                                     .filter(rental -> rental.getVehicle().getChassis().equals(vehicleChassis))
-                                    .map(rental -> new RentalResponseDTO(
+                                    .map(rental -> new VehicleRentalResponseDTO(
                                             rental.getId(),
                                             rental.getCustomer().getId(),
                                             rental.getCustomer().getEmail(),
@@ -108,9 +198,9 @@ public class RentalService {
         }
 
         if(customerEmail != null) {
-            List<RentalResponseDTO> rentals = rentalRepository.findRentalByCustomerEmail(customerEmail)
+            List<VehicleRentalResponseDTO> rentals = rentalRepository.findRentalByCustomerEmail(customerEmail)
                     .stream()
-                    .map(rental -> new RentalResponseDTO(
+                    .map(rental -> new VehicleRentalResponseDTO(
                             rental.getId(),
                             rental.getCustomer().getId(),
                             rental.getCustomer().getEmail(),
@@ -126,7 +216,7 @@ public class RentalService {
 
         return rentalRepository.findRentalByVehicleChassis(vehicleChassis)
                 .stream()
-                .map(rental -> new RentalResponseDTO(
+                .map(rental -> new VehicleRentalResponseDTO(
                         rental.getId(),
                         rental.getCustomer().getId(),
                         rental.getCustomer().getEmail(),
@@ -141,12 +231,12 @@ public class RentalService {
 
     //READ (BY ID)
     @Transactional
-    public RentalResponseDTO getRentalById(UUID id) {
+    public VehicleRentalResponseDTO getRentalById(UUID id) {
         Rental rental = rentalRepository.findById(id).orElseThrow(
                 () -> new RentalUUIDNotFoundException(id)
         );
 
-        return new RentalResponseDTO(
+        return new VehicleRentalResponseDTO(
                 rental.getId(),
                 rental.getCustomer().getId(),
                 rental.getCustomer().getEmail(),
@@ -161,7 +251,7 @@ public class RentalService {
 
     //UPDATE
     @Transactional
-    public RentalResponseDTO updateRental(UUID id, RentalRequestDTO rentalUpdateDTO) {
+    public VehicleRentalResponseDTO updateRental(UUID id, VehicleRentalRequestDTO rentalUpdateDTO) {
         Rental rental = rentalRepository.findById(id).orElseThrow(
                 () -> new RentalUUIDNotFoundException(id)
         );
@@ -181,7 +271,7 @@ public class RentalService {
 
         rentalRepository.save(rental);
 
-        return new RentalResponseDTO(
+        return new VehicleRentalResponseDTO(
                 rental.getId(),
                 rental.getCustomer().getId(),
                 rental.getCustomer().getEmail(),

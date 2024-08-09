@@ -34,4 +34,10 @@ public class RentalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleRequestedRentalNotFoundException(RequestedRentalNotFoundException e) {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.NOT_FOUND);
     }
+
+    //GENERAL
+    @ExceptionHandler(RentalException.class)
+    public ResponseEntity<ExceptionResponse> handleRentalException(RentalException e) {
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
