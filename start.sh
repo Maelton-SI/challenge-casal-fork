@@ -9,5 +9,5 @@ docker volume rm vehicle-rental-api-database-volume
 #Builds project's image
 docker build -t vehicle-rental-api:latest ./
 
-#Builds service containers
+#Creates and runs the project containers
 docker compose up --build --force-recreate --remove-orphans --renew-anon-volumes -d
