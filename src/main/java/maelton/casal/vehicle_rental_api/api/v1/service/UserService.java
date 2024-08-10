@@ -36,6 +36,8 @@ public class UserService {
             throw new IncompleteUserDetailsException("User email address has not been informed");
         if(userCreateDTO.password() == null || userCreateDTO.password().isEmpty())
             throw new IncompleteUserDetailsException("User password has not been informed");
+        if(userCreateDTO.role() == null)
+            throw new IncompleteUserDetailsException("User role has not been informed");
 
         if(userRepository.findUserByEmail(userCreateDTO.email()).isEmpty()) {
             User user = userRepository.save(
