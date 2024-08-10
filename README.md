@@ -11,13 +11,13 @@ A Vehicle Rental API é uma API para realização de locações de uma locadora 
 
 Consulte a descrição do desafio original disponível em [Desafio - Sistema de Gerenciamento de Recursos](docs/challenge-description.md).
 
-## Modelo UML
+## Modelo Relacional
 
 ## Regras de negócio
 
-1. Apenas administradores podem criar, autualizar ou deletar veículos do sistema.
+1. Apenas administradores podem criar, atualizar ou deletar veículos do sistema.
 2. Apenas administradores podem visualizar a lista de usuários cadastrados no sistema.
-3. Apenas administradores podem atualizar ou deletar registros de locações/alugueis do sistema.
+3. Apenas administradores podem atualizar ou deletar registros de locações/aluguel do sistema.
 4. Usuários administradores podem locar/alugar veículos para qualquer usuário do sistema (eles inclusos).
 5. Usuários não administradores podem locar/alugar veículos apenas para si mesmos.
 6. Todos os usuários (administradores ou não) podem visualizar a lista de veículos cadastrados no sistema.
@@ -73,4 +73,4 @@ Obs.: Modifique a porta no endereço caso a porta padrão da aplicação seja al
 
 ## Guia de uso
 
-Acesse o guia de uso da API para explicações mais específicas: [Vehicle Rental API - Guia de Uso](docs/usage-guide.md).
+Acesse o guia de uso da API para explicações mais específicas: [Vehicle Rental API - Guia de Uso](docs/guide/usage-guide.md).
