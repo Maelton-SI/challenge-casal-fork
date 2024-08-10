@@ -41,11 +41,10 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.POST, "/v1/users").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
                     .requestMatchers(HttpMethod.POST, "/v1/cars").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
                     .requestMatchers(HttpMethod.POST, "/v1/motorcycles").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
-                    .requestMatchers(HttpMethod.POST, "/v1/rentals").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
-                    //ADMINS CANT RENT DIRECTLY (USERS AND SUPERS CAN), THEY CAN CREATE AND UPDATED RENTALS THOUGH
-                    .requestMatchers(HttpMethod.POST, "/v1/rentals/car").hasAnyAuthority("SUPER_ADMIN", "USER")
-                    .requestMatchers(HttpMethod.POST, "/v1/rentals/motorcycle").hasAnyAuthority("SUPER_ADMIN", "USER")
+                    .requestMatchers(HttpMethod.POST, "/v1/rentals").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/v1/rentals/car").hasAnyAuthority("SUPER_ADMIN", "ADMIN", "USER")
+                    .requestMatchers(HttpMethod.POST, "/v1/rentals/motorcycle").hasAnyAuthority("SUPER_ADMIN", "ADMIN", "USER")
 
                     .anyRequest().authenticated()
             ).addFilterBefore(tokenAuthenticationSecurityFilter, UsernamePasswordAuthenticationFilter.class);
