@@ -1,26 +1,37 @@
 services:
   database:
     image: postgres:latest
-    container_name: vehicle-rental-api-db-container
+    container_name: vehicle-rental-api-database-container
     restart: always
     environment:
       - POSTGRES_DB=vehicle_rental_api
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
     ports:
-      - '5433:5432' #tenho postgres local, então vou usar a 5433 para o container
+      - '5433:5432' #tenho postgres local, então vou usar a 5433 de espelhamento para o localhost
     volumes:
-      - vehicle-rental-api-db-volume:/var/lib/postgresql/data
+      - vehicle-rental-api-database-volume:/var/lib/postgresql/data
 
   pgadmin: #Caso você precise do pgadmin para visualizar o banco de dados
     image: dpage/pgadmin4
-    container_name: pgadmin
+    container_name: pgadmin-container
     restart: always
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@pgadmin.org
       - PGADMIN_DEFAULT_PASSWORD=admin
     ports:
       - '8081:80' #tomcat do spring roda na 8080, então vou usar a 8081 para esse container
+
+  backend:
+    image: vehicle-rental-api:latest
+    container_name: vehicle-rental-api-backend-container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/vehicle_rental_api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
 volumes:
-  vehicle-rental-api-db-volume:
-    name: vehicle-rental-api-db-volume
+  vehicle-rental-api-database-volume:
+    name: vehicle-rental-api-database-volume
