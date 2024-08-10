@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
-                    .requestMatchers(HttpMethod.GET, "/v1/users").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/v1/users/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                     .requestMatchers(HttpMethod.POST, "/v1/users").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
                     .requestMatchers(HttpMethod.POST, "/v1/cars").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
