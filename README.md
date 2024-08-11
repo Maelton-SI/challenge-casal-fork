@@ -13,6 +13,8 @@ Consulte a descrição do desafio original disponível em [Desafio - Sistema de 
 
 ## Modelo Relacional
 
+![](docs/database/relational-model.png)
+
 ## Regras de negócio
 
 1. Apenas administradores podem criar, atualizar ou deletar veículos do sistema.
