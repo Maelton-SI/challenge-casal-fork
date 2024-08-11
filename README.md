@@ -49,6 +49,8 @@ Obs.: Se optado por executar a aplicação localmente e não em um container Doc
     docker compose up --build --force-recreate --remove-orphans --renew-anon-volumes -d
     ```
 
+4. Aguarde o docker construir os containers e disponibilizar os serviços da aplicação, dentro de poucos segundos a API já estará disponível para uso.
+
 A API estará disponível na porta local `8080`, o banco de dados postgres na porta `5433` e o PgAdmin (uso opcional, apague o serviço do [`docker-compose`](docker-compose.yml) se desejar) na porta `8081` . Atente-se às portas sendo expostas pelos containers e as portas em uso no seu ambiente local, mas fique a vontade para personalizar o arquivo [`docker-compose`](docker-compose.yml) presente no diretório do projeto em caso de necessidade, use-o também para verificar os serviços e containers sendo criados para a aplicação.
 
 Obs.: Em ambientes Unix e derivados a execução pode ser facilitada através do uso do arquivo [`start.sh`](start.sh) presente no diretório do projeto. O arquivo também pode ser consultado em caso de dúvidas durante a disponibilização da aplicação via Docker.
@@ -73,4 +75,4 @@ Obs.: Modifique a porta no endereço caso a porta padrão da aplicação seja al
 
 ## Guia de uso
 
-Acesse o guia de uso da API para explicações mais específicas: [Vehicle Rental API - Guia de Uso](docs/guide/usage-guide.md).
+Acesse o guia de uso da API para explicações mais específicas: [Vehicle Rental API - Guia de Uso](docs/Guia-de-Uso---Vehicle-Rental-API-v1.0.0.0.pdf).
