@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.motorcycle.MotorcycleRequestDTO;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value="/v1/motorcycles", produces = {"application/json"})
 @Tag(name = "Motorcycles Management", description = "Endpoints for managing motorcycles")
+@SecurityRequirement(name = "jwtAuthentication")
 public class MotorcycleController {
     @Autowired
     private MotorcycleService motorcycleService;
@@ -41,6 +43,9 @@ public class MotorcycleController {
                          content = {@Content(mediaType = "application/json",
                                 schema = @Schema(implementation = ExceptionResponse.class)
                          )}
+            ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot create new motorcycles"
             ),
             @ApiResponse(responseCode = "409",
                     description = "Informed chassis number already exists",
@@ -110,6 +115,9 @@ public class MotorcycleController {
                                 schema = @Schema(implementation = ExceptionResponse.class)
                          )}
             ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot update motorcycle registries"
+            ),
             @ApiResponse(responseCode = "404",
                     description = "Informed motorcycle UUID does not exist",
                     content = {@Content(mediaType = "application/json",
@@ -135,6 +143,9 @@ public class MotorcycleController {
     @ApiResponses(value= {
             @ApiResponse(responseCode = "204",
                     description = "Motorcycle deleted successfully"
+            ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot delete motorcycle registries"
             ),
             @ApiResponse(responseCode = "404",
                     description = "Informed motorcycle UUID does not exist",

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.user.UserRequestDTO;
@@ -25,6 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/users")
 @Tag(name = "Users Management", description = "Endpoints for managing users")
+@SecurityRequirement(name = "jwtAuthentication")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -74,11 +76,14 @@ public class UserController {
                                 )
                          )}
             ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot retrieve user registries"
+            ),
             @ApiResponse(responseCode = "404",
-                    description = "Queried user UUID or email address not found",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ExceptionResponse.class)
-                    )}
+                         description = "Queried user UUID or email address not found",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = ExceptionResponse.class)
+                         )}
             )
         }
     )
@@ -94,10 +99,13 @@ public class UserController {
     @Operation(summary = "Retrieves a user by its id", method = "GET")
     @ApiResponses(value= {
             @ApiResponse(responseCode = "200",
-                    description = "User returned successfully",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponseDTO.class)
-                    )}
+                         description = "User returned successfully",
+                         content = {@Content(mediaType = "application/json",
+                                 schema = @Schema(implementation = UserResponseDTO.class)
+                         )}
+            ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot retrieve user registries"
             ),
             @ApiResponse(responseCode = "404",
                     description = "Informed user UUID does not exist",
@@ -127,6 +135,9 @@ public class UserController {
                             schema = @Schema(implementation = ExceptionResponse.class)
                     )}
             ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot update user registries"
+            ),
             @ApiResponse(responseCode = "404",
                     description = "Informed user UUID does not exist",
                     content = {@Content(mediaType = "application/json",
@@ -153,6 +164,9 @@ public class UserController {
     @ApiResponses(value= {
             @ApiResponse(responseCode = "204",
                     description = "User deleted successfully"
+            ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot delete user registries"
             ),
             @ApiResponse(responseCode = "404",
                     description = "Informed user UUID does not exist",

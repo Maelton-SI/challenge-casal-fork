@@ -79,6 +79,7 @@ public class RentalService {
     //CREATE CAR RENTAL
     @Transactional
     public VehicleRentalResponseDTO createCarRental(CarRentalRequestDTO carRentalCreateDTO) {
+        //TODO: Catch and treat possible exception
         String customerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User rentalCustomer = userRepository.findUserByEmail(customerEmail).orElseThrow(
@@ -118,6 +119,7 @@ public class RentalService {
     //CREATE MOTORCYCLE RENTAL
     @Transactional
     public VehicleRentalResponseDTO createMotorcycleRental(MotorcycleRentalRequestDTO motorcycleRentalCreateDTO) {
+        //TODO: Catch and treat possible exception
         String customerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User rentalCustomer = userRepository.findUserByEmail(customerEmail).orElseThrow(

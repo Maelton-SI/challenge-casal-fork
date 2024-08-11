@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.car.CarRequestDTO;
@@ -30,6 +31,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value="/v1/cars")
 @Tag(name = "Cars Management", description = "Endpoints for managing cars")
+@SecurityRequirement(name = "jwtAuthentication")
 public class CarController {
     @Autowired
     private CarService carService;
@@ -48,6 +50,9 @@ public class CarController {
                          content = {@Content(mediaType = "application/json",
                                 schema = @Schema(implementation = ExceptionResponse.class)
                          )}
+            ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot create car registries"
             ),
             @ApiResponse(responseCode = "409",
                     description = "Informed chassis number already exists",
@@ -117,6 +122,9 @@ public class CarController {
                                 schema = @Schema(implementation = ExceptionResponse.class)
                          )}
             ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot update car registries"
+            ),
             @ApiResponse(responseCode = "404",
                          description = "Informed car UUID does not exist",
                          content = {@Content(mediaType = "application/json",
@@ -142,6 +150,9 @@ public class CarController {
     @ApiResponses(value= {
             @ApiResponse(responseCode = "204",
                          description = "Car deleted successfully"
+            ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot delete car registries"
             ),
             @ApiResponse(responseCode = "404",
                          description = "Informed car UUID does not exist",

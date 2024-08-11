@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import maelton.casal.vehicle_rental_api.api.v1.model.dto.vehicle.VehicleResponseDTO;
@@ -23,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value="/v1/vehicles")
 @Tag(name = "Vehicle Queries", description = "Endpoints for retrieving information about vehicles")
+@SecurityRequirement(name = "jwtAuthentication")
 public class VehicleController {
     @Autowired
     CarService carService;

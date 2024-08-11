@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import maelton.casal.vehicle_rental_api.api.v1.exception.handler.ExceptionResponse;
@@ -25,6 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/rentals")
 @Tag(name = "Rentals Management", description = "Endpoints for managing rental registries")
+@SecurityRequirement(name = "jwtAuthentication")
 public class RentalController {
     @Autowired
     RentalService rentalService;
@@ -37,6 +39,9 @@ public class RentalController {
                          content = {@Content(mediaType = "application/json",
                                  schema = @Schema(implementation = VehicleRentalResponseDTO.class)
                          )}
+            ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot create rental registries to any user"
             ),
             @ApiResponse(responseCode = "404",
                          description = "Informed rental id or vehicle id not found",
@@ -165,6 +170,9 @@ public class RentalController {
                                  schema = @Schema(implementation = VehicleRentalResponseDTO.class)
                          )}
             ),
+            @ApiResponse(responseCode = "403",
+                         description = "Non admin users cannot update rental registries"
+            ),
             @ApiResponse(responseCode = "400",
                          description = "Invalid or corrupted request",
                          content = {@Content(mediaType = "application/json",
@@ -190,6 +198,9 @@ public class RentalController {
     @ApiResponses(value= {
             @ApiResponse(responseCode = "204",
                          description = "Rental deleted successfully"
+            ),
+            @ApiResponse(responseCode = "403",
+                        description = "Non admin users cannot delete rental registries"
             ),
             @ApiResponse(responseCode = "404",
                          description = "Informed rental UUID does not exist",
