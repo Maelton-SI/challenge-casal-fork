@@ -37,18 +37,9 @@ public class MotorcycleService {
 
         if(!vehicleRepository.existsVehicleByChassis(motorcycleCreateDTO.chassis())) {
             Motorcycle motorcycle = motorcycleRepository.save(
-                    new Motorcycle(
-                            motorcycleCreateDTO.model(),
-                            motorcycleCreateDTO.chassis(),
-                            motorcycleCreateDTO.tankCapacity()
-                    )
+                    new Motorcycle(motorcycleCreateDTO.model(), motorcycleCreateDTO.chassis(), motorcycleCreateDTO.tankCapacity())
             );
-            return new MotorcycleResponseDTO(
-                    motorcycle.getId(),
-                    motorcycle.getModel(),
-                    motorcycle.getChassis(),
-                    motorcycle.getTankCapacity()
-            );
+            return motorcycleToMotorcycleResponseDTO(motorcycle);
         }
         throw new ChassisNumberAlreadyExistsException(motorcycleCreateDTO.chassis());
     }
@@ -58,12 +49,8 @@ public class MotorcycleService {
     public List<MotorcycleResponseDTO> getAllMotorcycles() {
         return motorcycleRepository.findAll()
                 .stream()
-                .map(motorcycle -> new MotorcycleResponseDTO(
-                        motorcycle.getId(),
-                        motorcycle.getModel(),
-                        motorcycle.getChassis(),
-                        motorcycle.getTankCapacity())
-                ).collect(Collectors.toList());
+                .map(this::motorcycleToMotorcycleResponseDTO)
+                .collect(Collectors.toList());
     }
 
     //READ (BY ID)
@@ -72,12 +59,7 @@ public class MotorcycleService {
         Optional<Motorcycle> optionalMotorcycle = motorcycleRepository.findById(id);
         if(optionalMotorcycle.isPresent()) {
             Motorcycle motorcycle = optionalMotorcycle.get();
-            return new MotorcycleResponseDTO(
-                    motorcycle.getId(),
-                    motorcycle.getModel(),
-                    motorcycle.getChassis(),
-                    motorcycle.getTankCapacity()
-            );
+            return motorcycleToMotorcycleResponseDTO(motorcycle);
         }
         throw new MotorcycleUUIDNotFoundException(id);
     }
@@ -96,17 +78,10 @@ public class MotorcycleService {
             if(!motorcycleUpdateDTO.chassis().equals(motorcycle.getChassis()))
                 if(vehicleRepository.existsVehicleByChassis(motorcycleUpdateDTO.chassis()))
                     throw new ChassisNumberAlreadyExistsException(motorcycleUpdateDTO.chassis());
-            motorcycle.setModel(motorcycleUpdateDTO.model());
-            motorcycle.setChassis(motorcycleUpdateDTO.chassis());
-            motorcycle.setTankCapacity(motorcycleUpdateDTO.tankCapacity());
 
-            motorcycleRepository.save(motorcycle);
-
-            return new MotorcycleResponseDTO(motorcycle.getId(),
-                    motorcycle.getModel(),
-                    motorcycle.getChassis(),
-                    motorcycle.getTankCapacity()
-            );
+            updateMotorcycle(motorcycleUpdateDTO, motorcycle);
+                motorcycleRepository.save(motorcycle);
+            return motorcycleToMotorcycleResponseDTO(motorcycle);
         }
         throw new MotorcycleUUIDNotFoundException(id);
     }
@@ -118,5 +93,20 @@ public class MotorcycleService {
             motorcycleRepository.deleteById(id);
         else
             throw new MotorcycleUUIDNotFoundException(id);
+    }
+
+    private MotorcycleResponseDTO motorcycleToMotorcycleResponseDTO(Motorcycle motorcycle) {
+        return new MotorcycleResponseDTO(
+                motorcycle.getId(),
+                motorcycle.getModel(),
+                motorcycle.getChassis(),
+                motorcycle.getTankCapacity()
+        );
+    }
+
+    private void updateMotorcycle(MotorcycleRequestDTO motorcycleUpdateDTO, Motorcycle motorcycle) {
+        motorcycle.setModel(motorcycleUpdateDTO.model());
+        motorcycle.setChassis(motorcycleUpdateDTO.chassis());
+        motorcycle.setTankCapacity(motorcycleUpdateDTO.tankCapacity());
     }
 }

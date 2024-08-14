@@ -39,7 +39,7 @@ public class CarService {
             Car car = carRepository.save(
                     new Car(carCreateDTO.model(), carCreateDTO.chassis(), carCreateDTO.numberOfDoors())
             );
-            return new CarResponseDTO(car.getId(), car.getModel(),car.getChassis(), carCreateDTO.numberOfDoors());
+            return carToCarResponseDTO(car);
         }
         throw new ChassisNumberAlreadyExistsException(carCreateDTO.chassis());
     }
@@ -49,12 +49,8 @@ public class CarService {
     public List<CarResponseDTO> getAllCars() {
         return carRepository.findAll()
                             .stream()
-                            .map(car -> new CarResponseDTO(
-                                            car.getId(),
-                                            car.getModel(),
-                                            car.getChassis(),
-                                            car.getNumberOfDoors())
-                            ).collect(Collectors.toList());
+                            .map(this::carToCarResponseDTO)
+                            .collect(Collectors.toList());
     }
 
     //READ (BY ID)
@@ -63,12 +59,7 @@ public class CarService {
         Optional<Car> optionalCar = carRepository.findById(id);
         if(optionalCar.isPresent()) {
             Car car = optionalCar.get();
-            return new CarResponseDTO(
-                    car.getId(),
-                    car.getModel(),
-                    car.getChassis(),
-                    car.getNumberOfDoors()
-            );
+            return carToCarResponseDTO(car);
         }
         throw new CarUUIDNotFoundException(id);
     }
@@ -87,18 +78,10 @@ public class CarService {
                 if(!carUpdateDTO.chassis().equals(car.getChassis()))
                     if(vehicleRepository.existsVehicleByChassis(carUpdateDTO.chassis()))
                         throw new ChassisNumberAlreadyExistsException(carUpdateDTO.chassis());
-                car.setModel(carUpdateDTO.model());
-                car.setChassis(carUpdateDTO.chassis());
-                car.setNumberOfDoors(carUpdateDTO.numberOfDoors());
 
-            carRepository.save(car);
-
-            return new CarResponseDTO(
-                    car.getId(),
-                    car.getModel(),
-                    car.getChassis(),
-                    car.getNumberOfDoors()
-            );
+            updateCar(carUpdateDTO, car);
+                carRepository.save(car);
+            return carToCarResponseDTO(car);
         }
         throw new CarUUIDNotFoundException(id);
     }
@@ -110,5 +93,20 @@ public class CarService {
             carRepository.deleteById(id);
         else
             throw new CarUUIDNotFoundException(id);
+    }
+
+    private CarResponseDTO carToCarResponseDTO(Car car) {
+        return new CarResponseDTO(
+                car.getId(),
+                car.getModel(),
+                car.getChassis(),
+                car.getNumberOfDoors()
+        );
+    }
+
+    private void updateCar(CarRequestDTO carUpdateDTO, Car car) {
+        car.setModel(carUpdateDTO.model());
+        car.setChassis(carUpdateDTO.chassis());
+        car.setNumberOfDoors(carUpdateDTO.numberOfDoors());
     }
 }

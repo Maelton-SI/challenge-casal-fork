@@ -41,10 +41,7 @@ public class UserService {
 
         if(userRepository.findUserByEmail(userCreateDTO.email()).isEmpty()) {
             User user = userRepository.save(
-                    new User(userCreateDTO.name(),
-                             userCreateDTO.email(),
-                             passwordEncoder.encode(userCreateDTO.password()),
-                             userCreateDTO.role())
+                    new User(userCreateDTO.name(), userCreateDTO.email(), passwordEncoder.encode(userCreateDTO.password()), userCreateDTO.role())
             );
             return new UserResponseDTO(user.getId(), user.getName(),user.getEmail(), userCreateDTO.role());
         }
@@ -57,12 +54,8 @@ public class UserService {
         if(id == null && (email == null || email.isEmpty())) {
             return userRepository.findAll()
                     .stream()
-                    .map(user -> new UserResponseDTO(
-                            user.getId(),
-                            user.getName(),
-                            user.getEmail(),
-                            user.getRole())
-                    ).collect(Collectors.toList());
+                    .map(this::userToUserResponseDTO)
+                    .collect(Collectors.toList());
         }
 
         if(id != null) {
@@ -70,29 +63,14 @@ public class UserService {
                     () -> new UserUUIDNotFoundException(id)
             );
 
-            return Collections.singletonList(
-                    new UserResponseDTO(
-                            user.getId(),
-                            user.getName(),
-                            user.getEmail(),
-                            user.getRole()
-                    )
-            );
+            return Collections.singletonList(userToUserResponseDTO(user));
         }
-
 
         User user = userRepository.findUserByEmail(email).orElseThrow(
                 () -> new UserEmailNotFoundException(email)
         );
 
-        return Collections.singletonList(
-                new UserResponseDTO(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getRole()
-                )
-        );
+        return Collections.singletonList(userToUserResponseDTO(user));
     }
     
     //READ (BY ID)
@@ -101,12 +79,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
-            return new UserResponseDTO(
-                    user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getRole()
-            );
+            return userToUserResponseDTO(user);
         }
         throw new UserUUIDNotFoundException(id);
     }
@@ -117,12 +90,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findUserByEmail(email);
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
-            return new UserResponseDTO(
-                    user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getRole()
-            );
+            return userToUserResponseDTO(user);
         }
         throw new UserEmailNotFoundException(email);
     }
@@ -141,18 +109,10 @@ public class UserService {
             if(!userUpdateDTO.email().equals(user.getEmail()))
                 if(userRepository.existsUserByEmail(userUpdateDTO.email()))
                     throw new UserEmailAlreadyExistsException(userUpdateDTO.email());
-            user.setName(userUpdateDTO.name());
-            user.setEmail(userUpdateDTO.email());
-            user.setPassword(passwordEncoder.encode(userUpdateDTO.password()));
-            user.setRole(userUpdateDTO.role());
 
-            userRepository.save(user);
-
-            return new UserResponseDTO(user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getRole()
-            );
+            updateUser(userUpdateDTO, user);
+                userRepository.save(user);
+            return userToUserResponseDTO(user);
         }
         throw new UserUUIDNotFoundException(id);
     }
@@ -171,18 +131,10 @@ public class UserService {
             if(!userUpdateDTO.email().equals(user.getEmail()))
                 if(userRepository.existsUserByEmail(userUpdateDTO.email()))
                     throw new UserEmailAlreadyExistsException(userUpdateDTO.email());
-            user.setName(userUpdateDTO.name());
-            user.setEmail(userUpdateDTO.email());
-            user.setPassword(passwordEncoder.encode(userUpdateDTO.password()));
-            user.setRole(userUpdateDTO.role());
 
-            userRepository.save(user);
-
-            return new UserResponseDTO(user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getRole()
-            );
+            updateUser(userUpdateDTO, user);
+                userRepository.save(user);
+            return userToUserResponseDTO(user);
         }
         throw new UserEmailNotFoundException(email);
     }
@@ -203,5 +155,21 @@ public class UserService {
             userRepository.deleteByEmail(email);
         else
             throw new UserEmailNotFoundException(email);
+    }
+
+    private UserResponseDTO userToUserResponseDTO(User user) {
+        return new UserResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        );
+    }
+
+    private void updateUser(UserRequestDTO userUpdateDTO, User user) {
+        user.setName(userUpdateDTO.name());
+        user.setEmail(userUpdateDTO.email());
+        user.setPassword(passwordEncoder.encode(userUpdateDTO.password()));
+        user.setRole(userUpdateDTO.role());
     }
 }
